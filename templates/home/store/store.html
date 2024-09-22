@@ -1,0 +1,181 @@
+{% extends "../../base.html" %}
+{% load static %}
+{% block title %}Store | Forever{% endblock %}
+{% block content %}
+
+    <br>
+    <!-- ##### Breadcumb Area Start ##### -->
+    <div class="breadcumb_area ">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12">
+                    <div class="page-title text-center">
+                    {% if 'search' in request.path %}
+                        <h2>Search Results</h2>
+                    {% else %}
+                        {% if category_slug != None %}
+                            <h2>{{category_slug}}</h2>
+                        {% else %}
+                            <h2>Store</h2>
+                        {% endif %}
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ##### Breadcumb Area End ##### -->
+
+    <!-- ##### Shop Grid Area Start ##### -->
+    <section class="shop_grid_area section-padding-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-3">
+                    <div class="shop_sidebar_area">
+
+                        <!-- ##### Single Widget ##### -->
+                        <div class="widget catagory mb-50">
+                            <!-- Widget Title -->
+                            <p class="widget-title mb-30">Catagories</p>
+
+                            <!--  Catagories  -->
+                            <div class="catagories-menu">
+                            <ul><li ><a href="{% url 'store:store' %}"><i class="fas fa-long-arrow-alt-right"></i>&nbsp;&nbsp;All Products</a></li></ul>
+                            {% for category in categories %}
+                                {% if category.slug in request.path %}
+                                <ul><li ><a style="color:#E2703A" href="{{ category.get_category_slug_url }}"><i class="fas fa-long-arrow-alt-right"></i>&nbsp;&nbsp;{{ category.name}}</a></li></ul>
+                                {% else %}
+                                <ul><li ><a href="{{ category.get_category_slug_url }}"><i class="fas fa-long-arrow-alt-right"></i>&nbsp;&nbsp;{{ category.name}}</a></li></ul>
+                                {% endif %}
+                            {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                
+                <div class="col-12 col-md-8 col-lg-9">
+                {% if products %}
+                    <div class="shop_grid_product_area">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="product-topbar  justify-content-between">
+                                    <!-- Total Products -->
+                                    <div class="total-products">
+                                        <p><b><span>{{ products_count }}</span></b> Products Found</p>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            
+                                {% for product in products %}
+                                <!-- Single Product -->
+                                <div class="col-12 col-sm-6 col-lg-4">
+                                
+                                    <div class="single-product-wrapper">
+                                        <!-- Product Image -->
+                                        <a href="{{product.get_prodcut_details_url}}">
+                                        <div class="product-img">
+                                            <img src="{{ product.image.url }}" alt="">
+                                            <!-- Hover Thumb -->
+                                            {% if product.discount %}
+                                            <!-- Product Badge -->
+                                            <div class="product-badge offer-badge">
+                                                <span>Discount</span>
+                                            </div>
+                                            {% endif %}
+
+                                            {% if product.new %}
+                                            <div class="product-badge new-badge">
+                                                <span>New</span>
+                                            </div>
+                                            <!-- Favourite -->
+                                            {% endif %}
+                                        </div>
+                                        </a>
+                                        <!-- Product Description -->
+                                        <div class="product-description">
+                                            <p class="product-price">{% if product.discount %}<span class="old-price">${{ product.discount }}</span>{% endif %} ${{ product.price }}</p>
+                                            <a href="{{product.get_prodcut_details_url}}">
+                                            <span class="product_name">{{ product.name }}</span>
+                                            </a>
+                                            <div class="rating-star text-center">
+                                                
+                                                <span class="storestar">
+                                                <i class="fa fa-star{% if product.averageRating < 0.5 %}-o{% elif product.averageRating >= 0.5 and product.averageRating < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if product.averageRating < 1.5 %}-o{% elif product.averageRating >= 1.5 and product.averageRating < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if product.averageRating < 2.5 %}-o{% elif product.averageRating >= 2.5 and product.averageRating < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if product.averageRating < 3.5 %}-o{% elif product.averageRating >= 3.5 and product.averageRating < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if product.averageRating < 4.5 %}-o{% elif product.averageRating >= 4.5 and product.averageRating < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                                </span>
+                                                <span style="font-size:18px;color:#EEB76B">( {{product.countReview}} )</span>
+                                            </div>
+                                            
+                                            <!-- Hover Content -->
+                                            <div class="hover-content">
+                                                <!-- Add to Cart -->
+                                                <div class="add-to-cart-btn">
+                                                    <a href="{{product.get_prodcut_details_url}}" class="btn essence-btn">View Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                                </div>
+                                {% endfor %}
+                            
+                            
+
+                        </div>
+                    </div>
+
+                    <div  class="col-12 col-sm-6 col-lg-12" >
+                        <div  class="centerr">
+                        {% if products.has_other_pages %}
+                            <div class="pagination">
+                                {% if products.has_previous %}
+                                <a href="?page=1"><i class="fas fa-angle-double-left"></i></a>
+                                <a href="?page={{products.previous_page_number}}"><i class="fas fa-angle-left"></i></a>
+                                {% else %}
+                                <a style="opacity:25%" class="#" href="#"><i class="fas fa-angle-double-left"></i></a>
+                                <a style="opacity:25%" class="#" href="#"><i class="fas fa-angle-left"></i></a>
+                                {% endif %}
+
+                                {% for x in products.paginator.page_range %}
+                                    {% if products.number == x %}
+                                        <a href="#" class="active">{{x}}</a>
+                                    {% elif x > products.number|add:'-3' and x < products.number|add:'3'  %}
+                                        <a href="?page={{x}}">{{x}}</a>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if products.has_next %}
+                                <a href="?page={{products.next_page_number}}"><i class="fas fa-angle-right"></i></a>
+                                <a href="?page={{products.paginator.num_pages}}"><i class="fas fa-angle-double-right"></i></a>
+                                {% else %}
+                                
+                                <a style="opacity:25%" href="#"><i class="fas fa-angle-right"></i></a>
+                                <a style="opacity:25%" href="#"><i class="fas fa-angle-double-right"></i></a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        </div>
+                        
+                    </div>
+                {% else %}
+                <br>
+                    <div style="font-size:18px" class="alert alert-secondary text-center" role="alert">
+                    Not Results Found, <a href="{% url 'store:store' %}" style="font-size:18px" class="alert-link">Continue Shopping</a>.
+                    </div>
+                {% endif %}
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    
+{% endblock %}
